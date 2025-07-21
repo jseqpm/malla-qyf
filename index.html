@@ -79,12 +79,11 @@
 
   <script>
     const ramos = [
-      // Agrega cada ramo con su semestre y requisitos
       { id: 'quimica1', nombre: 'química general I', semestre: 1, requisitos: [], desbloquea: ['quimica2', 'inorganica'] },
       { id: 'biologia', nombre: 'biología celular', semestre: 1, requisitos: [], desbloquea: ['histologia'] },
       { id: 'mate1', nombre: 'matemática I', semestre: 1, requisitos: [], desbloquea: ['fisica', 'mate2'] },
       { id: 'anatomia', nombre: 'anatomía y embriología humana', semestre: 1, requisitos: [], desbloquea: ['histologia'] },
-      
+
       { id: 'quimica2', nombre: 'química general II', semestre: 2, requisitos: ['quimica1'], desbloquea: ['organica1', 'analitica'] },
       { id: 'fisica', nombre: 'física general', semestre: 2, requisitos: ['mate1'], desbloquea: ['fisicoquimica1'] },
       { id: 'mate2', nombre: 'matemática II', semestre: 2, requisitos: ['mate1'], desbloquea: ['fisicoquimica1'] },
@@ -92,9 +91,57 @@
       { id: 'histologia', nombre: 'histología', semestre: 2, requisitos: ['biologia', 'anatomia'], desbloquea: ['biomedicina1'] },
       { id: 'electivo1', nombre: 'electivo de formación general I', semestre: 2, requisitos: [], desbloquea: [] },
 
-      // Agrega el resto siguiendo la misma lógica hasta XI semestre...
+      { id: 'organica1', nombre: 'química orgánica I', semestre: 3, requisitos: ['quimica2'], desbloquea: ['organica2', 'laborg'] },
+      { id: 'analitica', nombre: 'química analítica', semestre: 3, requisitos: ['quimica2'], desbloquea: ['instrumental'] },
+      { id: 'inorganica', nombre: 'química inorgánica', semestre: 3, requisitos: ['quimica1'], desbloquea: [] },
+      { id: 'fisicoquimica1', nombre: 'fisicoquímica I', semestre: 3, requisitos: ['mate2', 'fisica'], desbloquea: ['fisicoquimica2'] },
+      { id: 'biomedicina1', nombre: 'biomedicina I', semestre: 3, requisitos: ['histologia'], desbloquea: ['biomedicina2'] },
+      { id: 'electivo2', nombre: 'electivo de formación general II', semestre: 3, requisitos: [], desbloquea: [] },
 
-      { id: 'titulacion', nombre: 'actividad de titulación', semestre: 11, requisitos: 'ALL', desbloquea: [] },
+      { id: 'organica2', nombre: 'química orgánica II', semestre: 4, requisitos: ['organica1'], desbloquea: ['bioquimica', 'farmacoquimica1'] },
+      { id: 'instrumental', nombre: 'análisis instrumental', semestre: 4, requisitos: ['analitica'], desbloquea: ['bioquimica', 'bromatologia'] },
+      { id: 'fisicoquimica2', nombre: 'fisicoquímica II', semestre: 4, requisitos: ['fisicoquimica1'], desbloquea: ['operaciones'] },
+      { id: 'biomedicina2', nombre: 'biomedicina II', semestre: 4, requisitos: ['biomedicina1'], desbloquea: ['microbiologia', 'fisiopato1'] },
+      { id: 'laborg', nombre: 'laboratorio de química orgánica', semestre: 4, requisitos: ['organica1'], desbloquea: [] },
+
+      { id: 'bioquimica', nombre: 'bioquímica general', semestre: 5, requisitos: ['organica2', 'instrumental'], desbloquea: ['farmacologia1', 'bioqclinica'] },
+      { id: 'fisiopato1', nombre: 'fisiopatología I', semestre: 5, requisitos: ['biomedicina2'], desbloquea: ['farmacologia1', 'fisiopato2'] },
+      { id: 'microbiologia', nombre: 'microbiología', semestre: 5, requisitos: ['biomedicina2'], desbloquea: [] },
+      { id: 'operaciones', nombre: 'operaciones unitarias', semestre: 5, requisitos: ['fisicoquimica2'], desbloquea: ['tecfarma1'] },
+      { id: 'bromatologia', nombre: 'bromatología', semestre: 5, requisitos: ['instrumental'], desbloquea: [] },
+      { id: 'etica', nombre: 'ética', semestre: 5, requisitos: [], desbloquea: ['saludpublica', 'gestion'] },
+
+      { id: 'farmacologia1', nombre: 'farmacología I', semestre: 6, requisitos: ['bioquimica', 'fisiopato1'], desbloquea: ['farmacologia2'] },
+      { id: 'farmacoquimica1', nombre: 'farmacoquímica I', semestre: 6, requisitos: ['organica2'], desbloquea: ['farmacoquimica2'] },
+      { id: 'fisiopato2', nombre: 'fisiopatología II', semestre: 6, requisitos: ['fisiopato1'], desbloquea: ['farmacologia2'] },
+      { id: 'saludpublica', nombre: 'salud pública', semestre: 6, requisitos: ['etica'], desbloquea: ['epidemio'] },
+      { id: 'bioqclinica', nombre: 'bioquímica clínica', semestre: 6, requisitos: ['bioquimica'], desbloquea: ['biomolecular'] },
+
+      { id: 'farmacologia2', nombre: 'farmacología II', semestre: 7, requisitos: ['farmacologia1', 'fisiopato2'], desbloquea: ['farmaciaclinica1', 'toxicologia'] },
+      { id: 'tecfarma1', nombre: 'tecnología farmacéutica I', semestre: 7, requisitos: ['operaciones'], desbloquea: ['tecfarma2'] },
+      { id: 'biomolecular', nombre: 'biología molecular', semestre: 7, requisitos: ['bioqclinica'], desbloquea: [] },
+      { id: 'farmacoquimica2', nombre: 'farmacoquímica II', semestre: 7, requisitos: ['farmacoquimica1'], desbloquea: [] },
+      { id: 'gestion', nombre: 'administración y gestión farmacéutica', semestre: 7, requisitos: ['etica'], desbloquea: ['desarrollo'] },
+      { id: 'electivo3', nombre: 'electivo de formación general III', semestre: 7, requisitos: [], desbloquea: [] },
+
+      { id: 'farmaciaclinica1', nombre: 'farmacia clínica I', semestre: 8, requisitos: ['farmacologia2'], desbloquea: ['farmaciaclinica2', 'nutricion'] },
+      { id: 'tecfarma2', nombre: 'tecnología farmacéutica II', semestre: 8, requisitos: ['tecfarma1'], desbloquea: ['nutricion', 'legislacion'] },
+      { id: 'epidemio', nombre: 'epidemiología estadística', semestre: 8, requisitos: ['saludpublica'], desbloquea: ['metodologia'] },
+      { id: 'desarrollo', nombre: 'desarrollo comunicacional estadística', semestre: 8, requisitos: ['gestion'], desbloquea: [] },
+      { id: 'toxicologia', nombre: 'toxicología', semestre: 8, requisitos: ['farmacologia2'], desbloquea: [] },
+      { id: 'electivo4', nombre: 'electivo de formación general IV', semestre: 8, requisitos: [], desbloquea: [] },
+
+      { id: 'farmaciaclinica2', nombre: 'farmacia clínica II', semestre: 9, requisitos: ['farmaciaclinica1'], desbloquea: ['internado'] },
+      { id: 'nutricion', nombre: 'nutrición clínica', semestre: 9, requisitos: ['farmaciaclinica1', 'tecfarma2'], desbloquea: [] },
+      { id: 'metodologia', nombre: 'metodología de investigación', semestre: 9, requisitos: ['epidemio'], desbloquea: [] },
+      { id: 'legislacion', nombre: 'legislación farmacéutica', semestre: 9, requisitos: ['tecfarma2'], desbloquea: [] },
+      { id: 'electivoesp1', nombre: 'electivo de especialidad I', semestre: 9, requisitos: [], desbloquea: [] },
+
+      { id: 'internado', nombre: 'internado clínico', semestre: 10, requisitos: ['farmaciaclinica2'], desbloquea: [] },
+      { id: 'electivoesp2', nombre: 'electivo de especialidad II', semestre: 10, requisitos: [], desbloquea: [] },
+      { id: 'electivoesp3', nombre: 'electivo de especialidad III', semestre: 10, requisitos: [], desbloquea: [] },
+
+      { id: 'titulacion', nombre: 'actividad de titulación', semestre: 11, requisitos: 'ALL', desbloquea: [] }
     ];
 
     const estado = JSON.parse(localStorage.getItem('estadoRamos')) || {};
