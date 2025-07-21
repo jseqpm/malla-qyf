@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Malla Química y Farmacia UFRO</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5faff;
+      margin: 20px;
+      color: #003366;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .malla {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+    .semestre {
+      background: #e6f0fa;
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+    .semestre h2 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .ramo {
+      background: #ffffff;
+      border: 2px solid #aacbe2;
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+      position: relative;
+    }
+    .ramo:hover {
+      background: #dbefff;
+    }
+    .ramo.aprobado {
+      background: #c8f7c5;
+      text-decoration: line-through;
+      color: #4a7044;
+    }
+    .ramo.bloqueado {
+      background: #f5f5f5;
+      color: #aaa;
+      border-style: dashed;
+      cursor: not-allowed;
+    }
+    .ramo.bloqueado::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      left: 0;
+      background: #333;
+      color: #fff;
+      padding: 5px;
+      font-size: 12px;
+      border-radius: 4px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .ramo.bloqueado:hover::after {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <h1>Malla Química y Farmacia UFRO</h1>
+  <div class="malla" id="malla"></div>
+
+  <script>
+    const ramos = [
+      // Agrega cada ramo con su semestre y requisitos
+      { id: 'quimica1', nombre: 'química general I', semestre: 1, requisitos: [], desbloquea: ['quimica2', 'inorganica'] },
+      { id: 'biologia', nombre: 'biología celular', semestre: 1, requisitos: [], desbloquea: ['histologia'] },
+      { id: 'mate1', nombre: 'matemática I', semestre: 1, requisitos: [], desbloquea: ['fisica', 'mate2'] },
+      { id: 'anatomia', nombre: 'anatomía y embriología humana', semestre: 1, requisitos: [], desbloquea: ['histologia'] },
+      
+      { id: 'quimica2', nombre: 'química general II', semestre: 2, requisitos: ['quimica1'], desbloquea: ['organica1', 'analitica'] },
+      { id: 'fisica', nombre: 'física general', semestre: 2, requisitos: ['mate1'], desbloquea: ['fisicoquimica1'] },
+      { id: 'mate2', nombre: 'matemática II', semestre: 2, requisitos: ['mate1'], desbloquea: ['fisicoquimica1'] },
+      { id: 'intro', nombre: 'introducción a la química y farmacia', semestre: 2, requisitos: [], desbloquea: [] },
+      { id: 'histologia', nombre: 'histología', semestre: 2, requisitos: ['biologia', 'anatomia'], desbloquea: ['biomedicina1'] },
+      { id: 'electivo1', nombre: 'electivo de formación general I', semestre: 2, requisitos: [], desbloquea: [] },
+
+      // Agrega el resto siguiendo la misma lógica hasta XI semestre...
+
+      { id: 'titulacion', nombre: 'actividad de titulación', semestre: 11, requisitos: 'ALL', desbloquea: [] },
+    ];
+
+    const estado = JSON.parse(localStorage.getItem('estadoRamos')) || {};
+
+    function guardarEstado() {
+      localStorage.setItem('estadoRamos', JSON.stringify(estado));
+    }
+
+    function estaDisponible(ramo) {
+      if (ramo.requisitos === 'ALL') {
+        return ramos.every(r => r.id === ramo.id || estado[r.id]);
+      }
+      return ramo.requisitos.every(r => estado[r]);
+    }
+
+    function crearMalla() {
+      const contenedor = document.getElementById('malla');
+      contenedor.innerHTML = '';
+
+      const porSemestre = {};
+      ramos.forEach(r => {
+        if (!porSemestre[r.semestre]) porSemestre[r.semestre] = [];
+        porSemestre[r.semestre].push(r);
+      });
+
+      Object.keys(porSemestre).forEach(sem => {
+        const div = document.createElement('div');
+        div.className = 'semestre';
+        div.innerHTML = `<h2>Semestre ${sem}</h2>`;
+
+        porSemestre[sem].forEach(ramo => {
+          const divRamo = document.createElement('div');
+          divRamo.className = 'ramo';
+          divRamo.textContent = ramo.nombre;
+          divRamo.id = ramo.id;
+
+          const disponible = estaDisponible(ramo);
+
+          if (!disponible) {
+            divRamo.classList.add('bloqueado');
+            divRamo.setAttribute('data-tooltip', 'Requiere: ' + ramo.requisitos.join(', '));
+          } else if (estado[ramo.id]) {
+            divRamo.classList.add('aprobado');
+          }
+
+          divRamo.addEventListener('click', () => {
+            if (!estaDisponible(ramo)) return;
+            estado[ramo.id] = !estado[ramo.id];
+            guardarEstado();
+            crearMalla();
+          });
+
+          div.appendChild(divRamo);
+        });
+
+        contenedor.appendChild(div);
+      });
+    }
+
+    crearMalla();
+  </script>
+</body>
+</html>
